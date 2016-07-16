@@ -1,0 +1,19 @@
+server:
+  requestLog:
+    appenders: []
+  minThreads: 50
+  applicationConnectors:
+    - type: http
+      port: 8080
+      acceptQueueSize: 6000
+  adminConnectors:
+    - type: http
+      port: 8081
+
+spring:
+  appContextType: web
+
+logging:
+  level: INFO
+  appenders:
+    - type: console

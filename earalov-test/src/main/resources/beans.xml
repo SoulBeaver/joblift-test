@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+  <context:property-placeholder location="classpath:shortener.properties"/>
+  <bean name="connectionManager" class="earalov.joblift.test.dao.CouchbaseConnectionManager" init-method="initialize" destroy-method="stop">
+    <property name="bucketName" value="${shortener.couchbase.bucketName}" />
+    <property name="bucketPassword" value="${shortener.couchbase.bucketPassword}" />
+    <property name="operationTimeoutMs" value="${shortener.couchbase.operationTimeoutMs}" />
+    <property name="reconnectIntervalMs" value="${shortener.couchbase.reconnectIntervalMs}" />
+    <property name="servers" value="${shortener.couchbase.servers}" />
+  </bean>
+  <bean name="dao" class="earalov.joblift.test.dao.CouchbaseShortenerDao">
+    <constructor-arg ref="connectionManager"/>
+    <property name="counterKey" value="${shortener.couchbase.counterKey}"/>
+  </bean>
+  <bean name="converter" class="earalov.joblift.test.resource.Base62Converter" />
+  <bean name="resource" class="earalov.joblift.test.resource.ShortenerResource">
+    <constructor-arg index="0" ref="dao"/>
+    <constructor-arg index="1" ref="converter"/>
+    <property name="baseUrl" value="${shortener.baseUrl}"/>
+  </bean>
+</beans>
